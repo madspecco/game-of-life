@@ -8,5 +8,5 @@ public class GameOfLifeSimulation {
 
         simulation.runSimulation();
     }
-    
+
 }
