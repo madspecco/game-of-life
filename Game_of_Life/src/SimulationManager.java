@@ -2,9 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimulationManager {
-    private List<Cell> cells;
-    private FoodManager foodManager;
-    private boolean isRunning;
+    private List<Cell> cells;           // list of cells that are in the simulation
+    private FoodManager foodManager;    // instance of FoodManager
+    private boolean isRunning;          // flag for running state
 
     public SimulationManager(int initialFoodUnits, int initialCellCount) {
         foodManager = new FoodManager(initialFoodUnits);
@@ -13,11 +13,13 @@ public class SimulationManager {
 
         // Create and add initial cells to the simulation
         for (int i = 0; i < initialCellCount; i++) {
+            // CHORE: Think of another logic for spawning the cells' type
             CellType cellType = (i % 2 == 0) ? CellType.ASEXUATE : CellType.SEXUATE;
             cells.add(new Cell(cellType));
         }
 
         // Start the simulation threads
+        // start() method is from the Thread Class, since Cell extends Thread
         for (Cell cell : cells) {
             cell.start();
         }
@@ -31,12 +33,12 @@ public class SimulationManager {
     }
 
     public void runSimulation() {
-        while (isRunning) { // TO BE IMPLEMENTED !!!!
-            // Simulate the progression of time
-            // Implement any other global simulation logic here
+        while (isRunning) {
+            // CHORE: Simulate the progression of time
+            // CHORE: Implement any other global simulation logic here
 
             // Print the current state of the simulation
-           // printSimulationState();
+            // printSimulationState();
             printSimulationStateGraphic();  //Graphic Version prints a "map" version in the console
 
             // Sleep for a specified interval to control the simulation speed
@@ -53,18 +55,19 @@ public class SimulationManager {
         System.out.print("\033[H\033[2J");
 
         System.out.println("Simulation State:");
-        char[][] grid = new char[20][20]; // Adjust the grid size as needed
+        char[][] grid = new char[10][10]; // Adjust the grid size as needed
 
+        // CHORE: Determine cell position according to its id (maybe change the logic)
         for (Cell cell : cells) {
-            long x = cell.getId() % 20;
-            long y = cell.getId() / 20;
+            long x = cell.getId() % 10;
+            long y = cell.getId() / 10;
 
             char cellSymbol = (cell.getType() == CellType.ASEXUATE) ? 'A' : 'S';
             grid[(int)y][(int)x] = cellSymbol;
         }
 
-        for (int y = 0; y < 20; y++) {
-            for (int x = 0; x < 20; x++) {
+        for (int y = 0; y < 10; y++) {
+            for (int x = 0; x < 10; x++) {
                 if (grid[y][x] == '\0') {
                     grid[y][x] = '.'; // Empty space
                 }
@@ -87,12 +90,5 @@ public class SimulationManager {
                     " - Reproduction Cycle: " + cell.getReproductionCycle());
         }
         System.out.println("------------------------------------");
-    }
-
-    public static void main(String[] args) {
-        // Initialize and start the simulation
-        SimulationManager simulation = new SimulationManager(100, 5); // Initial food units and cell count
-        simulation.runSimulation();
-        simulation.stopSimulation();
     }
 }

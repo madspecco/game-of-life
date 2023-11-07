@@ -1,3 +1,4 @@
+// create type for the cell using enum
 public enum CellType {
     ASEXUATE("Asexuate Cell"),
     SEXUATE("Sexuate Cell");
