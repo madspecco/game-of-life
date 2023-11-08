@@ -42,15 +42,15 @@ public class Cell extends Thread {
 
     public void eat() {
         if (hunger > 0) {
-            // CHORE: Simulate eating behavior
+            // CHORE: Simulate eating behavior (Bolos)
             hunger--;
-            // CHORE: Implement logic to decrement food units or handle food resource management
+            // CHORE: Implement logic to decrement food units or handle food resource management (Bolos)
         }
     }
 
     public void starve() {
         if (hunger <= 0) {
-            // CHORE: Implement the tasks below
+            // CHORE: Implement the tasks below (Bolos)
             // Simulate starvation and cell death
             // Drop a random number of food units (1 to 5) when the cell dies
             int foodUnitsDropped = (int) (Math.random() * 5) + 1;
@@ -60,23 +60,23 @@ public class Cell extends Thread {
 
     public void reproduce() {
         if (reproductionCycle >= 10) {
-            // CHORE: Check if the cell is ready to reproduce
+            // CHORE: Check if the cell is ready to reproduce (Horia)
             if (type == CellType.ASEXUATE) {
-                // CHORE: Reproduction for asexuate cells: division into two new cells
+                // CHORE: Reproduction for asexuate cells: division into two new cells (Horia)
                 Cell newCell1 = new Cell(CellType.ASEXUATE);
                 Cell newCell2 = new Cell(CellType.ASEXUATE);
-                // CHORE: Implement logic to add new cells to the simulation
+                // CHORE: Implement logic to add new cells to the simulation (Horia)
 
                 //  reset the reproduction cycle
                 reproductionCycle = 0;
             } else {
-                // CHORE: Reproduction for sexuate cells: interaction with other cells
-                // CHORE: Implement logic to find a suitable/macthing/fit partner cell for reproduction
-                // CHORE: Create  new cell resulting from that interaction
+                // CHORE: Reproduction for sexuate cells: interaction with other cells (Horia)
+                // CHORE: Implement logic to find a suitable/matching/fit partner cell for reproduction (Timi)
+                // CHORE: Create  new cell resulting from that interaction (Timi)
                 Cell newCell = new Cell(CellType.SEXUATE);
-                // CHORE: Logic to add the new cell to the simulation
+                // CHORE: Logic to add the new cell to the simulation (Timi)
 
-                // CHORE: reset the reproduction cycle
+                // CHORE: reset the reproduction cycle (Timi)
                 reproductionCycle = 0;
             }
         }

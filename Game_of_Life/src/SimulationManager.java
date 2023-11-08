@@ -13,7 +13,7 @@ public class SimulationManager {
 
         // Create and add initial cells to the simulation
         for (int i = 0; i < initialCellCount; i++) {
-            // CHORE: Think of another logic for spawning the cells' type
+            // CHORE: Think of another logic for spawning the cells' type (Caia)
             CellType cellType = (i % 2 == 0) ? CellType.ASEXUATE : CellType.SEXUATE;
             cells.add(new Cell(cellType));
         }
@@ -34,8 +34,8 @@ public class SimulationManager {
 
     public void runSimulation() {
         while (isRunning) {
-            // CHORE: Simulate the progression of time
-            // CHORE: Implement any other global simulation logic here
+            // CHORE: Simulate the progression of time (Caia)
+            // CHORE: Implement any other global simulation logic here (Caia)
 
             // Print the current state of the simulation
             // printSimulationState();
@@ -57,7 +57,7 @@ public class SimulationManager {
         System.out.println("Simulation State:");
         char[][] grid = new char[10][10]; // Adjust the grid size as needed
 
-        // CHORE: Determine cell position according to its id (maybe change the logic)
+        // CHORE: Determine cell position according to its id (maybe change the logic) (Caia)
         for (Cell cell : cells) {
             long x = cell.getId() % 10;
             long y = cell.getId() / 10;
