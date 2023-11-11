@@ -8,6 +8,8 @@ public class Cell extends Thread {
     private final int id;           // unique id for the cell
     private final CellType type;    // type of the cell
     private int hunger;             // hunger state (satiation)
+
+    private FoodManager foodManager;
     private int reproductionCycle;  // at 10 cycles, the cell reproduces(by case)
     private Lock cellLock;          // Lock object for managing concurrency issues
 
@@ -41,20 +43,29 @@ public class Cell extends Thread {
     }
 
     public void eat() {
+
         if (hunger > 0) {
-            // CHORE: Simulate eating behavior (Bolos)
             hunger--;
-            // CHORE: Implement logic to decrement food units or handle food resource management (Bolos)
+            foodManager.consumeFood(this, 1);
         }
     }
 
     public void starve() {
         if (hunger <= 0) {
-            // CHORE: Implement the tasks below (Bolos)
-            // Simulate starvation and cell death
-            // Drop a random number of food units (1 to 5) when the cell dies
             int foodUnitsDropped = (int) (Math.random() * 5) + 1;
-            // Logic to drop food units and handle cell death
+
+            // lock the cell to avoid concurrency issues during 'death'
+            cellLock.lock();
+            try {
+                // get the cell's food
+                foodManager.replenishFood(foodUnitsDropped);
+
+                // remove the cell from the simulation
+                CellManager.removeCell(this);
+            } finally {
+                // unlock the cell
+                cellLock.unlock();
+            }
         }
     }
 
