@@ -36,4 +36,43 @@ public class CellManager {
             cellListLock.unlock();
         }
     }
+
+    // 'unlock' all the cells
+    public void startCells() {
+        cellListLock.lock();
+        try {
+            for (Cell cell : cells) {
+                cell.start();
+            }
+        } finally {
+            cellListLock.unlock();
+        }
+    }
+
+
+    // 'lock' all the cells
+    public void stopCells() {
+        cellListLock.lock();
+        try {
+            for (Cell cell : cells) {
+                cell.interrupt();
+            }
+        } finally {
+            cellListLock.unlock();
+        }
+    }
+
+    // life cycle of the cells (eat, starve, reproduce)
+    public void updateCellState() {
+        cellListLock.lock();
+        try {
+            for (Cell cell : cells) {
+                // Call methods on each cell to update their state
+                System.out.println(" updating cell " + cell.getCellId() + "  ");
+                cell.run();
+            }
+        } finally {
+            cellListLock.unlock();
+        }
+    }
 }

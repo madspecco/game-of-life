@@ -2,46 +2,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimulationManager {
-    private List<Cell> cells;           // list of cells that are in the simulation
-    private FoodManager foodManager;    // instance of FoodManager
-    private boolean isRunning;          // flag for running state
+    private CellManager cellManager;    // Instance of CellManager
+    private FoodManager foodManager;    // Instance of FoodManager
+    private boolean isRunning;          // Flag for running state
+    private int simulationTime;
 
     public SimulationManager(int initialFoodUnits, int initialCellCount) {
+        cellManager = new CellManager(); // Create an instance of CellManager
         foodManager = new FoodManager(initialFoodUnits);
-        cells = new ArrayList<>();
         isRunning = true;
+        simulationTime = 0;
 
-        // Create and add initial cells to the simulation
+        // Create and add initial cells to the simulation using the CellManager
         for (int i = 0; i < initialCellCount; i++) {
-            // CHORE: Think of another logic for spawning the cells' type (Caia)
             CellType cellType = (i % 2 == 0) ? CellType.ASEXUATE : CellType.SEXUATE;
-            cells.add(new Cell(cellType));
+            Cell cell = new Cell(cellType);
+            cell.setFoodManager(foodManager); // Set the food manager for each cell
+            cellManager.addCell(cell); // Add the cell to the CellManager
         }
 
         // Start the simulation threads
-        // start() method is from the Thread Class, since Cell extends Thread
-        for (Cell cell : cells) {
-            cell.start();
-        }
+        cellManager.startCells();
     }
 
     public void stopSimulation() {
         isRunning = false;
-        for (Cell cell : cells) {
-            cell.interrupt(); // Interrupt all cell threads to stop the simulation
-        }
+        cellManager.stopCells(); // Stop the cell threads using CellManager
     }
 
     public void runSimulation() {
+        System.out.println("1");
         while (isRunning) {
-            // CHORE: Simulate the progression of time (Caia)
-            // CHORE: Implement any other global simulation logic here (Caia)
+            System.out.println("2");
+            simulationTime++;
+            System.out.println("3 simTime++");
+            // 1. Update the state of each cell
+            // The CellManager handles the cell logic and threads
+            cellManager.updateCellState();
+            System.out.println("4 updated Cellstate()");
+            // 2. Implement global simulation logic here
+            // For example, replenish food units (adjust amount as needed):
+            foodManager.replenishFood(10);
+            System.out.println("5  replenished food");
 
             // Print the current state of the simulation
-            // printSimulationState();
-            printSimulationStateGraphic();  //Graphic Version prints a "map" version in the console
+            printSimulationStateGraphic();
+            System.out.println("6 PRINT");
 
-            // Sleep for a specified interval to control the simulation speed
+            if (simulationTime % 60 == 0) {
+                stopSimulation();
+            }
+
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -52,22 +63,26 @@ public class SimulationManager {
 
     private void printSimulationStateGraphic() {
         // Clear the console to redraw the simulation state (you may need platform-specific code) !!!
-        System.out.print("\033[H\033[2J");
+        // System.out.print("\033[H\033[2J");
+        System.out.println("\n\n\n\n\n");
 
         System.out.println("Simulation State:");
-        char[][] grid = new char[10][10]; // Adjust the grid size as needed
+        char[][] grid = new char[20][20]; // Adjust the grid size as needed
 
-        // CHORE: Determine cell position according to its id (maybe change the logic) (Caia)
+        // Retrieve the list of cells from the CellManager
+        List<Cell> cells = cellManager.getAllCells();
+
+        // Determine cell position according to its id
         for (Cell cell : cells) {
-            long x = cell.getId() % 10;
-            long y = cell.getId() / 10;
+            long x = cell.getId() % 20;
+            long y = cell.getId() / 20;
 
             char cellSymbol = (cell.getType() == CellType.ASEXUATE) ? 'A' : 'S';
-            grid[(int)y][(int)x] = cellSymbol;
+            grid[(int) y][(int) x] = cellSymbol;
         }
 
-        for (int y = 0; y < 10; y++) {
-            for (int x = 0; x < 10; x++) {
+        for (int y = 0; y < 20; y++) {
+            for (int x = 0; x < 20; x++) {
                 if (grid[y][x] == '\0') {
                     grid[y][x] = '.'; // Empty space
                 }
@@ -81,14 +96,15 @@ public class SimulationManager {
     }
 
 
-    private void printSimulationState() {
-        System.out.println("Simulation State:");
-        System.out.println("Food Units: " + foodManager.getFoodUnits());
-        for (Cell cell : cells) {
-            System.out.println("Cell " + cell.getId() + " - Type: " + cell.getType() +
-                    " - Hunger: " + cell.getHunger() +
-                    " - Reproduction Cycle: " + cell.getReproductionCycle());
-        }
-        System.out.println("------------------------------------");
-    }
+
+//    private void printSimulationState() {
+//        System.out.println("Simulation State:");
+//        System.out.println("Food Units: " + foodManager.getFoodUnits());
+//        for (Cell cell : cells) {
+//            System.out.println("Cell " + cell.getId() + " - Type: " + cell.getType() +
+//                    " - Hunger: " + cell.getHunger() +
+//                    " - Reproduction Cycle: " + cell.getReproductionCycle());
+//        }
+//        System.out.println("------------------------------------");
+//    }
 }

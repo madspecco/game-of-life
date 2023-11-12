@@ -30,8 +30,11 @@ public class Cell extends Thread {
         while (true) {
             try {
                 // Simulate cell actions and interactions here
+                System.out.println("Eat");
                 eat(); // Cell eats in each simulation step
+                System.out.println("Starve");
                 starve(); // Check for starvation
+                System.out.println("Reproduce");
                 reproduce(); // Check for reproduction
 
                 // Sleep for some time to represent the passage of time
@@ -72,14 +75,12 @@ public class Cell extends Thread {
 
     public void reproduce() {
         if (reproductionCycle >= 10) {
-            // CHORE: Check if the cell is ready to reproduce (Horia) - OK
             if (type == CellType.ASEXUATE) {
-                // CHORE: Reproduction for asexuate cells: division into two new cells (Horia) - OK
                 Cell newCell1 = new Cell(CellType.ASEXUATE);
                 Cell newCell2 = new Cell(CellType.ASEXUATE);
-                // CHORE: Implement logic to add new cells to the simulation (Horia) - OK
                 CellManager.addCell(newCell1);
                 CellManager.addCell(newCell2);
+
                 //  reset the reproduction cycle
                 reproductionCycle = 0;
             } else {
@@ -119,6 +120,10 @@ public class Cell extends Thread {
 
     public int getReproductionCycle() {
         return reproductionCycle;
+    }
+
+    public void setFoodManager(FoodManager foodManager) {
+        this.foodManager = foodManager;
     }
 
     // Locking and unlocking the threads (concurrency issue)
