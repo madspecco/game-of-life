@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -60,18 +61,26 @@ public class Cell extends Thread {
 
     public void reproduce() {
         if (reproductionCycle >= 10) {
-            // CHORE: Check if the cell is ready to reproduce (Horia)
+            // CHORE: Check if the cell is ready to reproduce (Horia) - OK
             if (type == CellType.ASEXUATE) {
-                // CHORE: Reproduction for asexuate cells: division into two new cells (Horia)
+                // CHORE: Reproduction for asexuate cells: division into two new cells (Horia) - OK
                 Cell newCell1 = new Cell(CellType.ASEXUATE);
                 Cell newCell2 = new Cell(CellType.ASEXUATE);
-                // CHORE: Implement logic to add new cells to the simulation (Horia)
-
+                // CHORE: Implement logic to add new cells to the simulation (Horia) - OK
+                CellManager.addCell(newCell1);
+                CellManager.addCell(newCell2);
                 //  reset the reproduction cycle
                 reproductionCycle = 0;
             } else {
-                // CHORE: Reproduction for sexuate cells: interaction with other cells (Horia)
+                // CHORE: Reproduction for sexuate cells: interaction with other cells (Horia) - OK
+                List<Cell> cellList = CellManager.getAllCells();
                 // CHORE: Implement logic to find a suitable/matching/fit partner cell for reproduction (Timi)
+                for(int i=0; i< cellList.size(); i++) {
+                    Cell currentCell = cellList.get(i);
+                    if(currentCell.getType() == CellType.SEXUATE && currentCell.reproductionCycle >= 10) {
+                        // is a match
+                    }
+                }
                 // CHORE: Create  new cell resulting from that interaction (Timi)
                 Cell newCell = new Cell(CellType.SEXUATE);
                 // CHORE: Logic to add the new cell to the simulation (Timi)
