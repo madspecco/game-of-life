@@ -27,27 +27,23 @@ public class Cell extends Thread {
     // this represents the life cycle of the cell
     @Override
     public void run() {
-        while (true) {
-            try {
-                // Simulate cell actions and interactions here
-                System.out.println("Eat");
-                eat(); // Cell eats in each simulation step
-                System.out.println("Starve");
-                starve(); // Check for starvation
-                System.out.println("Reproduce");
-                reproduce(); // Check for reproduction
+        // Simulate cell actions and interactions here
+        System.out.println("Cell ID: " + this.getCellId() + " has eaten.");
+        eat(); // Cell eats in each simulation step
+        System.out.println("Cell ID: " + this.getCellId() + " has starved.");
+        starve(); // Check for starvation
+        System.out.println("Cell ID: " + this.getCellId() + " has reproduced.");
+        reproduce(); // Check for reproduction
+        // Sleep for some time to represent the passage of time
 
-                // Sleep for some time to represent the passage of time
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // Handle interruptions if necessary
-                break;
-            }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public void eat() {
-
         if (hunger > 0) {
             hunger--;
             foodManager.consumeFood(this, 1);
@@ -82,9 +78,7 @@ public class Cell extends Thread {
                 CellManager.addCell(newCell2);
 
                 //  reset the reproduction cycle
-                reproductionCycle = 0;
             } else {
-                // CHORE: Reproduction for sexuate cells: interaction with other cells (Horia) - OK
                 List<Cell> cellList = CellManager.getAllCells();
                 // CHORE: Implement logic to find a suitable/matching/fit partner cell for reproduction (Timi)
                 for(int i=0; i< cellList.size(); i++) {
@@ -98,8 +92,8 @@ public class Cell extends Thread {
                 // CHORE: Logic to add the new cell to the simulation (Timi)
 
                 // CHORE: reset the reproduction cycle (Timi)
-                reproductionCycle = 0;
             }
+            reproductionCycle = 0;
         }
     }
 

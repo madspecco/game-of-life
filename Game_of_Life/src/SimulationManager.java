@@ -18,11 +18,11 @@ public class SimulationManager {
             CellType cellType = (i % 2 == 0) ? CellType.ASEXUATE : CellType.SEXUATE;
             Cell cell = new Cell(cellType);
             cell.setFoodManager(foodManager); // Set the food manager for each cell
-            cellManager.addCell(cell); // Add the cell to the CellManager
+            CellManager.addCell(cell); // Add the cell to the CellManager
         }
 
         // Start the simulation threads
-        cellManager.startCells();
+        // cellManager.startCells();
     }
 
     public void stopSimulation() {
@@ -31,23 +31,23 @@ public class SimulationManager {
     }
 
     public void runSimulation() {
-        System.out.println("1");
+        System.out.println("runSimulation() initiated.");
         while (isRunning) {
-            System.out.println("2");
+            System.out.println("While loop started. (isRunning = " + true + ")");
             simulationTime++;
-            System.out.println("3 simTime++");
+            System.out.println("Simulation time incremented (simTime++)");
             // 1. Update the state of each cell
             // The CellManager handles the cell logic and threads
             cellManager.updateCellState();
-            System.out.println("4 updated Cellstate()");
+            System.out.println("cell life cycle updated (updateCellstate() called)");
             // 2. Implement global simulation logic here
             // For example, replenish food units (adjust amount as needed):
             foodManager.replenishFood(10);
-            System.out.println("5  replenished food");
+            System.out.println("Food replenished");
 
             // Print the current state of the simulation
             printSimulationStateGraphic();
-            System.out.println("6 PRINT");
+            System.out.println("Printing grid");
 
             if (simulationTime % 60 == 0) {
                 stopSimulation();

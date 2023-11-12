@@ -69,7 +69,7 @@ public class CellManager {
             for (Cell cell : cells) {
                 // Call methods on each cell to update their state
                 System.out.println(" updating cell " + cell.getCellId() + "  ");
-                cell.run();
+                cell.start();
             }
         } finally {
             cellListLock.unlock();
