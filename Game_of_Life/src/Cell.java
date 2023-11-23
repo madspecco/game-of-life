@@ -10,14 +10,19 @@ public class Cell extends Thread {
     private final CellType type;    // type of the cell
     private int hunger;             // hunger state (satiation)
 
-    private FoodManager foodManager;
+    private static FoodManager foodManager;
+
+    public void setReproductionCycle(int reproductionCycle) {
+        this.reproductionCycle = reproductionCycle;
+    }
+
     private int reproductionCycle;  // at 10 cycles, the cell reproduces(by case)
     private Lock cellLock;          // Lock object for managing concurrency issues
 
     public Cell(CellType type) {
         this.id = nextId++;
         this.type = type;
-        this.hunger = 0;
+        this.hunger = (int) (Math.random() * 10) + 5;
         this.reproductionCycle = 0;
         this.cellLock = new ReentrantLock();
         // A reentrant lock is a mutual exclusion mechanism that allows threads to reenter into a lock
@@ -28,14 +33,18 @@ public class Cell extends Thread {
     @Override
     public void run() {
         // Simulate cell actions and interactions here
-        System.out.println("Cell ID: " + this.getCellId() + " has eaten.");
+        System.out.println("Cell ID: " + this.getCellId() + " has eaten ");
+        System.out.println("Cell ID: " + this.getCellId() + " Hunger Level(before eating): " + this.getHunger());
         eat(); // Cell eats in each simulation step
-        System.out.println("Cell ID: " + this.getCellId() + " has starved.");
-        starve(); // Check for starvation
-        System.out.println("Cell ID: " + this.getCellId() + " has reproduced.");
-        reproduce(); // Check for reproduction
-        // Sleep for some time to represent the passage of time
+        System.out.println("Cell ID: " + this.getCellId() + " Hunger Level(after eating): " + this.getHunger());
 
+        System.out.println("Cell ID: " + this.getCellId() + " has starved " + "hunger level: " + this.getHunger());
+        starve(); // Check for starvation
+
+        System.out.println("\nCell ID: " + this.getCellId() + " has reproduced.");
+        reproduce(); // Check for reproduction
+
+        // Sleep for some time to represent the passage of time
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -45,8 +54,12 @@ public class Cell extends Thread {
 
     public void eat() {
         if (hunger > 0) {
-            hunger--;
+            // check if food was really eaten, then decrement hunger
+            if (foodManager.consumeFood(this, 1)) {
+                hunger--;
+            }
             foodManager.consumeFood(this, 1);
+            reproductionCycle++;
         }
     }
 
@@ -77,20 +90,26 @@ public class Cell extends Thread {
                 CellManager.addCell(newCell1);
                 CellManager.addCell(newCell2);
 
-                //  reset the reproduction cycle
+                //  reset the reproduction cycle !!!!!!!!!
+
+                // function kinda updateTime() for each rep cycle from the SimManager update all cells
+                reproductionCycle = 0;
             } else {
+                // search for the sexuate cell to mate with
                 List<Cell> cellList = CellManager.getAllCells();
                 boolean match = false;
                 
                 for(int i=0; i< cellList.size(); i++) {
                     Cell currentCell = cellList.get(i);
-                    if(currentCell.getType() == CellType.SEXUATE && currentCell.reproductionCycle >= 10) {
+                    if(currentCell.getType() == CellType.SEXUATE && currentCell.getReproductionCycle() >= 10) {
                     	// search for another Sexuate cell
                     	for(int j=0; j<cellList.size(); j++) {
                     		Cell otherCell = cellList.get(j);
                     		// check if match is found
-                    		if(otherCell.getType() == CellType.SEXUATE && otherCell.reproductionCycle >= 10 && i != j) {
+                    		if(otherCell.getType() == CellType.SEXUATE && otherCell.getReproductionCycle() >= 10 && i != j) {
                     			match = true;
+                                // set reproduction cycle of the OTHER cell to 0
+                                otherCell.setReproductionCycle(0);
                     			break;
                     		}
                     	}
@@ -139,5 +158,10 @@ public class Cell extends Thread {
 
     public void releaseLock() {
         cellLock.unlock();
+    }
+
+    public void updateTime() {
+        // for each cycle, hunger ++
+
     }
 }

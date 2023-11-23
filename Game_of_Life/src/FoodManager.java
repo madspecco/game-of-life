@@ -2,6 +2,14 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class FoodManager {
+    public void setFoodUnits(int foodUnits) {
+        this.foodUnits = foodUnits;
+    }
+
+    public int getFoodUnits() {
+        return foodUnits;
+    }
+
     private int foodUnits;  // Total food units available
     private Lock foodLock;  // For synchronization, same usage as the cellLock, the name differs
 
@@ -34,7 +42,4 @@ public class FoodManager {
         }
     }
 
-    public int getFoodUnits() {
-        return foodUnits;
-    }
 }

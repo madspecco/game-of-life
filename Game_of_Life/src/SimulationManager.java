@@ -36,10 +36,15 @@ public class SimulationManager {
             System.out.println("While loop started. (isRunning = " + true + ")");
             simulationTime++;
             System.out.println("Simulation time incremented (simTime++)");
+
+            if(simulationTime > 0) {
+                cellManager.updateCellTime();
+            }
             // 1. Update the state of each cell
             // The CellManager handles the cell logic and threads
             cellManager.updateCellState();
             System.out.println("cell life cycle updated (updateCellstate() called)");
+
             // 2. Implement global simulation logic here
             // For example, replenish food units (adjust amount as needed):
             foodManager.replenishFood(10);

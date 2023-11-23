@@ -75,4 +75,18 @@ public class CellManager {
             cellListLock.unlock();
         }
     }
+
+    // same as updateCellState, instead of cell.start -> cell.updateTime()
+    public void updateCellTime() {
+        cellListLock.lock();
+        try {
+            for (Cell cell : cells) {
+                // Call methods on each cell to update their state
+                System.out.println(" updating cell time " + cell.getCellId() + "  ");
+                cell.updateTime();
+            }
+        } finally {
+            cellListLock.unlock();
+        }
+    }
 }
