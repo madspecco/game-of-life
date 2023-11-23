@@ -80,18 +80,30 @@ public class Cell extends Thread {
                 //  reset the reproduction cycle
             } else {
                 List<Cell> cellList = CellManager.getAllCells();
-                // CHORE: Implement logic to find a suitable/matching/fit partner cell for reproduction (Timi)
+                boolean match = false;
+                
                 for(int i=0; i< cellList.size(); i++) {
                     Cell currentCell = cellList.get(i);
                     if(currentCell.getType() == CellType.SEXUATE && currentCell.reproductionCycle >= 10) {
-                        // is a match
+                    	// search for another Sexuate cell
+                    	for(int j=0; j<cellList.size(); j++) {
+                    		Cell otherCell = cellList.get(j);
+                    		// check if match is found
+                    		if(otherCell.getType() == CellType.SEXUATE && otherCell.reproductionCycle >= 10 && i != j) {
+                    			match = true;
+                    			break;
+                    		}
+                    	}
                     }
                 }
-                // CHORE: Create  new cell resulting from that interaction (Timi)
-                Cell newCell = new Cell(CellType.SEXUATE);
-                // CHORE: Logic to add the new cell to the simulation (Timi)
-
-                // CHORE: reset the reproduction cycle (Timi)
+                
+                // add new cell to simulation if needed
+                if(match) {
+	                // CHORE: Create  new cell resulting from that interaction (Timi)
+	                Cell newCell = new Cell(CellType.SEXUATE);
+	                // CHORE: Logic to add the new cell to the simulation (Timi)
+	                CellManager.addCell(newCell);
+                }
             }
             reproductionCycle = 0;
         }
