@@ -37,4 +37,8 @@ public class FoodManager {
     public int getFoodUnits() {
         return foodUnits;
     }
+
+    public void setFoodUnits(int foodUnits) {
+        this.foodUnits = foodUnits;
+    }
 }

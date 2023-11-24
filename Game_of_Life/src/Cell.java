@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -8,6 +9,13 @@ public class Cell extends Thread {
     private final int id;           // unique id for the cell
     private final CellType type;    // type of the cell
     private int hunger;             // hunger state (satiation)
+
+    private static FoodManager foodManager;
+
+    public void setReproductionCycle(int reproductionCycle) {
+        this.reproductionCycle = reproductionCycle;
+    }
+
     private int reproductionCycle;  // at 10 cycles, the cell reproduces(by case)
     private Lock cellLock;          // Lock object for managing concurrency issues
 
@@ -18,11 +26,7 @@ public class Cell extends Thread {
     public Cell(CellType type) {
         this.id = nextId++;
         this.type = type;
-<<<<<<< Updated upstream
-        this.hunger = 0;
-=======
         this.hunger = (int) (Math.random() * 8) + 2;
->>>>>>> Stashed changes
         this.reproductionCycle = 0;
         this.cellLock = new ReentrantLock();
         // A reentrant lock is a mutual exclusion mechanism that allows threads to reenter into a lock
@@ -30,31 +34,6 @@ public class Cell extends Thread {
     }
 
     // this represents the life cycle of the cell
-<<<<<<< Updated upstream
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                // Simulate cell actions and interactions here
-                eat(); // Cell eats in each simulation step
-                starve(); // Check for starvation
-                reproduce(); // Check for reproduction
-
-                // Sleep for some time to represent the passage of time
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // Handle interruptions if necessary
-                break;
-            }
-        }
-    }
-
-    public void eat() {
-        if (hunger > 0) {
-            // CHORE: Simulate eating behavior (Bolos)
-            hunger--;
-            // CHORE: Implement logic to decrement food units or handle food resource management (Bolos)
-=======
     //@Override
 //    public void run() {
 //        // Simulate cell actions and interactions here
@@ -86,20 +65,10 @@ public class Cell extends Thread {
             }
             reproductionCycle++;
             return foodEaten;
->>>>>>> Stashed changes
         }
         return false;
     }
 
-<<<<<<< Updated upstream
-    public void starve() {
-        if (hunger <= 0) {
-            // CHORE: Implement the tasks below (Bolos)
-            // Simulate starvation and cell death
-            // Drop a random number of food units (1 to 5) when the cell dies
-            int foodUnitsDropped = (int) (Math.random() * 5) + 1;
-            // Logic to drop food units and handle cell death
-=======
     public boolean starve() {
         cellLock.lock();
         try {
@@ -116,43 +85,24 @@ public class Cell extends Thread {
         } finally {
             // unlock the cell
             cellLock.unlock();
->>>>>>> Stashed changes
         }
     }
 
 
     public boolean reproduce() {
         if (reproductionCycle >= 10) {
-            // CHORE: Check if the cell is ready to reproduce (Horia)
             if (type == CellType.ASEXUATE) {
-                // CHORE: Reproduction for asexuate cells: division into two new cells (Horia)
                 Cell newCell1 = new Cell(CellType.ASEXUATE);
                 Cell newCell2 = new Cell(CellType.ASEXUATE);
-<<<<<<< Updated upstream
-                // CHORE: Implement logic to add new cells to the simulation (Horia)
-
-                //  reset the reproduction cycle
-=======
 
                 CellManager.addCell(newCell1);
                 CellManager.addCell(newCell2);
 
                 // Reset the reproduction cycle
->>>>>>> Stashed changes
                 reproductionCycle = 0;
 
                 return true; // Reproduction occurred
             } else {
-<<<<<<< Updated upstream
-                // CHORE: Reproduction for sexuate cells: interaction with other cells (Horia)
-                // CHORE: Implement logic to find a suitable/matching/fit partner cell for reproduction (Timi)
-                // CHORE: Create  new cell resulting from that interaction (Timi)
-                Cell newCell = new Cell(CellType.SEXUATE);
-                // CHORE: Logic to add the new cell to the simulation (Timi)
-
-                // CHORE: reset the reproduction cycle (Timi)
-                reproductionCycle = 0;
-=======
                 // Search for the sexuate cell to mate with
                 List<Cell> cellList = CellManager.getAllCells();
                 boolean match = false;
@@ -185,7 +135,6 @@ public class Cell extends Thread {
 
                     return true; // Reproduction occurred
                 }
->>>>>>> Stashed changes
             }
         }
         return false; // Reproduction did not occur
@@ -217,6 +166,10 @@ public class Cell extends Thread {
         return foodManager;
     }
 
+    public void setFoodManager(FoodManager foodManager) {
+        this.foodManager = foodManager;
+    }
+
     // Locking and unlocking the threads (concurrency issue)
     public void acquireLock() {
         cellLock.lock();
@@ -225,8 +178,6 @@ public class Cell extends Thread {
     public void releaseLock() {
         cellLock.unlock();
     }
-<<<<<<< Updated upstream
-=======
 
     public void updateTime() {
         // for each cycle, hunger ++
@@ -243,5 +194,4 @@ public class Cell extends Thread {
         // update global food manager with this number of food units
         return foodManager.getFoodUnits();
     }
->>>>>>> Stashed changes
 }
