@@ -150,18 +150,22 @@ public class CellManager {
             Cell cell = iterator.next();
 
             cell.updateTime();
-            System.out.println("CellManager cell[" + cell.getId() + "].eat()");
+            System.out.println("CellManager cell[" + cell.getCellId() + "].eat()");
             cell.eat();
 
             //System.out.println("CellList size BEFORE starvation: " + cellList.size());
-            //System.out.println("CellManager cell[" + cell.getId() + "] check if starving");
+            //System.out.println("CellManager cell[" + cell.getCellId() + "] check if starving");
 
             if (cell.starve() == true) {
-                System.out.println("CellManager cell[" + cell.getId() + "] HAS STARVED, REMOVE IT");
+
+                System.out.println("CellManager cell[" + cell.getCellId() + "] HAS STARVED, REMOVE IT");
+                removeCell(cell);
                 iterator.remove(); // Remove the current cell using the iterator's remove method
+                //cell.releaseLock();
+                cell = null;
                 System.out.println("CellList size AFTER starvation: " + cellList.size());
             } else {
-                System.out.println("CellManager cell[" + cell.getId() + "] is reproducing");
+                System.out.println("CellManager cell[" + cell.getCellId() + "] is reproducing");
                 reproduceCell(cell);
             }
 

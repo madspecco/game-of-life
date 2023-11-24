@@ -15,7 +15,7 @@ public class SimulationManager {
 
         // Create and add initial cells to the simulation using the CellManager
         for (int i = 0; i < initialCellCount; i++) {
-            CellType cellType = (i % 2 == 0) ? CellType.ASEXUATE : CellType.SEXUATE;
+            CellType cellType = (i % 2 == 0) ? CellType.SEXUATE : CellType.ASEXUATE;
             Cell cell = new Cell(cellType);
             cell.updateFoodManagerFoodUnits(initialFoodUnits); // Set the food manager for each cell
             CellManager.addCell(cell); // Add the cell to the CellManager
