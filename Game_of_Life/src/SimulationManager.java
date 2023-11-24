@@ -6,10 +6,13 @@ public class SimulationManager {
     private FoodManager foodManager;    // instance of FoodManager
     private boolean isRunning;          // flag for running state
 
+    private int simulationTime;
+
     public SimulationManager(int initialFoodUnits, int initialCellCount) {
         foodManager = new FoodManager(initialFoodUnits);
         cells = new ArrayList<>();
         isRunning = true;
+        simulationTime = 0;
 
         // Create and add initial cells to the simulation
         for (int i = 0; i < initialCellCount; i++) {
@@ -44,10 +47,35 @@ public class SimulationManager {
     }
 
     public void runSimulation() {
+        System.out.println("Nigga you gay");
+
         while (isRunning) {
 <<<<<<< Updated upstream
             // CHORE: Simulate the progression of time (Caia)
+            // Iterative keeping of time -> Each iteration(cycle) represents 1 time unit.
+            simulationTime++;
+            // 1. Update the state of each cell
+            for (Cell cell : cells) {
+                cell.run(); // This will simulate cell actions, interactions, and their life cycle.
+            }
+
+
             // CHORE: Implement any other global simulation logic here (Caia)
+
+            // 2. Implement global simulation logic here
+            // For example, replenish food units and introduce new cells:
+            // Replenish food units (by desired ammount):
+            foodManager.replenishFood(10); // Replenish 10 food units every iteration.
+
+            //  if the number of cells is less than 3 new cells will be introduced:
+            if (cells.size() < 3) {
+                // Create and add 3 new cells to the simulation.
+                //Adjust as desired boys :)
+                //This is a default set of "To-Be-Added" Cells
+                cells.add(new Cell(CellType.ASEXUATE));
+                cells.add(new Cell(CellType.SEXUATE));
+                cells.add(new Cell(CellType.SEXUATE));
+            }
 
             // Print the current state of the simulation
             // printSimulationState();
@@ -84,6 +112,14 @@ public class SimulationManager {
             }
 >>>>>>> Stashed changes
 
+            if (simulationTime % 60 == 0) {
+                // Trigger an event every 60 cycles, for example
+                // Stopping the simulation after 60 cycles
+                // Other possible event: Increase speed of simulation by decreasing Thread.sleep
+                // time from 1000 to 100
+                stopSimulation();
+            }
+
             // Sleep for a specified interval to control the simulation speed
             try {
                 Thread.sleep(2000);
@@ -95,10 +131,11 @@ public class SimulationManager {
 
     private void printSimulationStateGraphic() {
         // Clear the console to redraw the simulation state (you may need platform-specific code) !!!
-        System.out.print("\033[H\033[2J");
+        //System.out.print("\033[H\033[2J");
+        System.out.println("\n\n\n\n\n");
 
         System.out.println("Simulation State:");
-        char[][] grid = new char[10][10]; // Adjust the grid size as needed
+        char[][] grid = new char[20][20]; // Adjust the grid size as needed
 
 <<<<<<< Updated upstream
         // CHORE: Determine cell position according to its id (maybe change the logic) (Caia)
@@ -109,8 +146,8 @@ public class SimulationManager {
         // Determine cell position according to its id
 >>>>>>> Stashed changes
         for (Cell cell : cells) {
-            long x = cell.getId() % 10;
-            long y = cell.getId() / 10;
+            long x = cell.getId() % 20;
+            long y = cell.getId() / 20;
 
             char cellSymbol = (cell.getType() == CellType.ASEXUATE) ? 'A' : 'S';
 <<<<<<< Updated upstream
@@ -122,8 +159,8 @@ public class SimulationManager {
 >>>>>>> Stashed changes
         }
 
-        for (int y = 0; y < 10; y++) {
-            for (int x = 0; x < 10; x++) {
+        for (int y = 0; y < 20; y++) {
+            for (int x = 0; x < 20; x++) {
                 if (grid[y][x] == '\0') {
                     grid[y][x] = '.'; // Empty space
                 }
