@@ -32,30 +32,6 @@ public class Cell extends Thread {
         // A reentrant lock is a mutual exclusion mechanism that allows threads to reenter into a lock
         // on a resource (multiple times) without a deadlock situation
     }
-
-    // this represents the life cycle of the cell
-    //@Override
-//    public void run() {
-//        // Simulate cell actions and interactions here
-//        System.out.println("Cell ID: " + this.getCellId() + " has eaten ");
-//        System.out.println("Cell ID: " + this.getCellId() + " Hunger Level(before eating): " + this.getHunger());
-//        eat(); // Cell eats in each simulation step
-//        System.out.println("Cell ID: " + this.getCellId() + " Hunger Level(after eating): " + this.getHunger());
-//
-//        System.out.println("Cell ID: " + this.getCellId() + " has starved " + "hunger level: " + this.getHunger());
-//        starve(); // Check for starvation
-//
-//        System.out.println("\nCell ID: " + this.getCellId() + " has reproduced.");
-//        reproduce(); // Check for reproduction
-//
-//        // Sleep for some time to represent the passage of time
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     public boolean eat() {
         if (hunger > 0) {
             // check if food was really eaten, then decrement hunger

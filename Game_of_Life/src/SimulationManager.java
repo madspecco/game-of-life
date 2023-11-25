@@ -22,7 +22,6 @@ public class SimulationManager {
         }
 
         // Start the simulation threads
-        // cellManager.startCells();
         cellManager.updateCellState();
     }
 
@@ -34,31 +33,23 @@ public class SimulationManager {
     public void runSimulation() {
         System.out.println("runSimulation() initiated.");
         while (isRunning) {
-            //System.out.println("While loop started. (isRunning = " + true + ")");
             if(simulationTime == 0) {
                 System.out.println("Printing INITIAL grid");
                 printSimulationStateGraphic();
-//                cellManager.updateCellTime();
             }
             simulationTime++;
-            //System.out.println("Simulation time incremented (simTime++)");
 
             if(simulationTime == 0) {
                 System.out.println("Printing INITIAL grid");
                 printSimulationStateGraphic();
-//                cellManager.updateCellTime();
             }
-            // 1. Update the state of each cell
-            // The CellManager handles the cell logic and threads
 
-            //cellManager.updateCellState();
             cellManager.performCellActions();
             System.out.println("cell life cycle updated (eat,starve,reproduce cycle");
 
             // Print the current state of the simulation
             printSimulationStateGraphic();
             System.out.println("Printing grid");
-//            Thread.sleep(3000);
 
             if (simulationTime % 20 == 0) {
                 stopSimulation();
@@ -74,7 +65,6 @@ public class SimulationManager {
 
     private void printSimulationStateGraphic() {
         // Clear the console to redraw the simulation state (you may need platform-specific code) !!!
-        // System.out.print("\033[H\033[2J");
         System.out.println("\n\n\n\n\n");
 
         System.out.println("Simulation State:");
@@ -104,21 +94,8 @@ public class SimulationManager {
             System.out.println();
         }
 
-//        System.out.println("Food Units: " + foodManager.getFoodUnits());
+        //System.out.println("Food Units: " + foodManager.getFoodUnits());
         System.out.println("Food Units: " + foodUnitCount);
         System.out.println("------------------------------------");
     }
-
-
-
-//    private void printSimulationState() {
-//        System.out.println("Simulation State:");
-//        System.out.println("Food Units: " + foodManager.getFoodUnits());
-//        for (Cell cell : cells) {
-//            System.out.println("Cell " + cell.getId() + " - Type: " + cell.getType() +
-//                    " - Hunger: " + cell.getHunger() +
-//                    " - Reproduction Cycle: " + cell.getReproductionCycle());
-//        }
-//        System.out.println("------------------------------------");
-//    }
 }
