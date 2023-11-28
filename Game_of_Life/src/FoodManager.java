@@ -2,15 +2,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class FoodManager {
-    public void setFoodUnits(int foodUnits) {
-        this.foodUnits = foodUnits;
-    }
-
-    public int getFoodUnits() {
-        return foodUnits;
-    }
-
     private int foodUnits;  // Total food units available
+
+    private int deadCellFoodUnits = 0;
     private Lock foodLock;  // For synchronization, same usage as the cellLock, the name differs
 
     public FoodManager(int initialFoodUnits) {
@@ -23,7 +17,7 @@ public class FoodManager {
         try {
             if (foodUnits >= amount) {
                 foodUnits -= amount;
-                cell.eat(); // Notify the cell that it has eaten
+                // cell.eat(); // Notify the cell that it has eaten
                 return true; // Food consumed successfully
             }
             return false; // Not enough food available
@@ -36,10 +30,22 @@ public class FoodManager {
     public void replenishFood(int amount) {
         foodLock.lock();
         try {
-            foodUnits += amount;
+            deadCellFoodUnits += amount;
         } finally {
             foodLock.unlock();
         }
     }
 
+    public void addDeadCellFoodUnits() {
+        this.foodUnits += deadCellFoodUnits;
+        deadCellFoodUnits = 0;
+    }
+
+    public int getFoodUnits() {
+        return foodUnits;
+    }
+
+    public void setFoodUnits(int foodUnits) {
+        this.foodUnits = foodUnits;
+    }
 }
