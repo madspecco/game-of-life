@@ -6,9 +6,37 @@ public class Cell extends Thread {
     private static int nextId = 0;
     private final int id;           // unique id for the cell
     private final CellType type;    // type of the cell
-    private int hunger;             // hunger state (satiation)
 
-    private final FoodManager foodManager; //no food manager in cell
+    public void setSaturation(int saturation) {
+        this.saturation = saturation;
+    }
+
+    private int saturation;             // hunger state (satiation)
+
+    public final int T_full = 5;
+    public final int T_starve = -5;
+
+    private static FoodManager foodManager; //no food manager in cell
+
+    private int xPos;
+
+    public int getxPos() {
+        return xPos;
+    }
+
+    public void setxPos(int xPos) {
+        this.xPos = xPos;
+    }
+
+    public int getyPos() {
+        return yPos;
+    }
+
+    public void setyPos(int yPos) {
+        this.yPos = yPos;
+    }
+
+    private int yPos;
 
     public void setReproductionCycle(int reproductionCycle) {
         this.reproductionCycle = reproductionCycle;
@@ -21,7 +49,7 @@ public class Cell extends Thread {
     public Cell(CellType type, FoodManager fm) {
         this.id = nextId++;
         this.type = type;
-        this.hunger = 5;
+        this.saturation = 0;
         this.reproductionCycle = 0;
         this.cellLock = new ReentrantLock();
         this.foodManager = fm;
@@ -29,13 +57,13 @@ public class Cell extends Thread {
         // on a resource (multiple times) without a deadlock situation
     }
     public boolean eat() {
-        if (hunger > 0) {
+        if (saturation <= 0) {
             // check if food was really eaten, then decrement hunger
             boolean foodEaten = foodManager.consumeFood(this, 1);
             if (foodEaten) {
-                hunger -= 2;
+                saturation = T_full;
+                reproductionCycle++;
             }
-            reproductionCycle++;
             return foodEaten;
         }
         return false;
@@ -44,8 +72,8 @@ public class Cell extends Thread {
     public boolean starve() {
         cellLock.lock();
         try {
-            if (hunger >= 10) {
-                int foodUnitsDropped = 3;
+            if (saturation == T_starve) {
+                int foodUnitsDropped = (int) (Math.random() * 4) + 1;
                 foodManager.replenishFood(foodUnitsDropped);
 
                 // remove the cell from the simulation
@@ -66,21 +94,20 @@ public class Cell extends Thread {
         return type;
     }
 
-    public int getHunger() {
-        return hunger;
+    public int getSaturation() {
+        return saturation;
     }
 
     public int getReproductionCycle() {
         return reproductionCycle;
     }
 
-    public int getFoodUnitCountFromFoodManager() {
+    public static int getFoodUnitCountFromFoodManager() {
         return foodManager.getFoodUnits();
     }
 
     public void updateTime() {
-        // for each cycle, hunger ++
-        this.hunger = hunger + 2;
-        this.reproductionCycle++;
+        // for each cycle, hunger --
+        this.saturation = saturation - 1;
     }
 }

@@ -1,8 +1,6 @@
 import java.util.List;
 import java.util.Random;
 import javax.swing.*;
-import java.awt.*;
-import java.util.List;
 
 public class SimulationManager {
     private final CellManager cellManager;      // Instance of CellManager
@@ -42,7 +40,7 @@ public class SimulationManager {
         cellGUI = new CellGUI(cellsForGUI);
         frame.add(cellGUI);
 
-        frame.setSize(800, 600); // Set the size of the frame
+        frame.setSize(800, 800); // Set the size of the frame
         frame.setVisible(true);
     }
 
@@ -66,12 +64,12 @@ public class SimulationManager {
             printStatistics();
             cellGUI.updateCells(cellManager.getAllCells());
 
-            if (simulationTime % 20 == 0) {
+            if (simulationTime % 300 == 0) {
                 stopSimulation();
             }
 
             try {
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -94,7 +92,7 @@ public class SimulationManager {
                 sexuate_count++;
             }
 
-            System.out.println(cellSymbol + " Cell ID: " + cell.getCellId() + " hunger - " + cell.getHunger() + " reprC - " + cell.getReproductionCycle());
+            System.out.println(cellSymbol + " Cell ID: " + cell.getCellId() + " hunger - " + cell.getSaturation() + " reprC - " + cell.getReproductionCycle());
             foodUnitCount = cell.getFoodUnitCountFromFoodManager();
         }
 

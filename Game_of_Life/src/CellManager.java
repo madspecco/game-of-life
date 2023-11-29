@@ -18,7 +18,41 @@ public class CellManager {
     public static void addCell(Cell cell) {
         cellListLock.lock();
         try {
-            cells.add(cell);
+            boolean placeFound = false;
+            boolean gridFull = false;
+            int xCurr = 0, yCurr = 0;
+
+            while(!placeFound) {
+                //grid size is hardcoded
+                xCurr = (int) (Math.random() * (CellGUI.gridSize - 2)) + 1;
+                yCurr = (int) (Math.random() * (CellGUI.gridSize - 2)) + 1;
+                placeFound = true;
+
+                List<Cell> cellList = getAllCells();
+
+                if(cellList.size() == (CellGUI.gridSize - 2)*(CellGUI.gridSize - 2)){
+                    gridFull = true;
+                    System.out.println("gsagujhasljgsalhgjasbgu;sdaguasdugh;aoshg;osah");
+                    break;
+                }
+
+                // Using Iterator to safely remove elements during iteration
+                Iterator<Cell> iterator = cellList.iterator();
+                while (iterator.hasNext()) {
+                    Cell cellAux = iterator.next();
+                    int xAux = cellAux.getxPos();
+                    int yAux = cellAux.getyPos();
+
+                    if(xCurr == xAux && yCurr == yAux){
+                        placeFound = false;
+                    }
+                }
+            }
+            if(!gridFull) {
+                cell.setxPos(xCurr);
+                cell.setyPos(yCurr);
+                cells.add(cell);
+            }
         } finally {
             cellListLock.unlock();
         }
@@ -69,50 +103,51 @@ public class CellManager {
         }
     }
 
-    public boolean reproduceCell(Cell cell) {
+    public void reproduceCell(Cell cell) {
         CellType type = cell.getType();
         int reproductionCycle = cell.getReproductionCycle();
 
-        if (reproductionCycle >= 10) {
-            if (type == CellType.ASEXUATE) {
-                Cell newCell1 = new Cell(CellType.ASEXUATE, this.foodManager);
+        // if repC >= 10 - SEXUATE, 20 for ASEXUATE
 
-                addCell(newCell1);
+        if(type == CellType.ASEXUATE && reproductionCycle >= 12)
+        {
+            Cell newCell1 = new Cell(CellType.ASEXUATE, this.foodManager);
 
-                // Reset the reproduction cycle
-                newCell1.setReproductionCycle(0);
-                cell.setReproductionCycle(0);
+            addCell(newCell1);
 
-                return true; // Reproduction occurred
-            } else {
-                List<Cell> cellList = getAllCells();
-                boolean match = false;
+            // Reset the reproduction cycle
+            newCell1.setReproductionCycle(0);
+            cell.setReproductionCycle(0);
+            cell.setSaturation(0);
+        }
 
-                for (int i = 0; i < cellList.size(); i++) {
-                    Cell currentCell = cellList.get(i);
-                    if (currentCell.getType() == CellType.SEXUATE && currentCell.getReproductionCycle() >= 10) {
-                        for (int j = 0; j < cellList.size(); j++) {
-                            Cell otherCell = cellList.get(j);
-                            if (otherCell.getType() == CellType.SEXUATE && otherCell.getReproductionCycle() >= 10 && i != j) {
-                                match = true;
-                                currentCell.setReproductionCycle(0);
-                                otherCell.setReproductionCycle(0);
-                                break;
-                            }
+        if(reproductionCycle >= 10)
+        {
+            List<Cell> cellList = getAllCells();
+            boolean match = false;
+
+            for (int i = 0; i < cellList.size(); i++) {
+                Cell currentCell = cellList.get(i);
+                if (currentCell.getType() == CellType.SEXUATE) {
+                    for (int j = 0; j < cellList.size(); j++) {
+                        Cell otherCell = cellList.get(j);
+                        if (otherCell.getType() == CellType.SEXUATE && otherCell.getReproductionCycle() >= 10 && i != j) {
+                            match = true;
+                            currentCell.setReproductionCycle(0);
+                            otherCell.setReproductionCycle(0);
+                            break;
                         }
                     }
                 }
+            }
 
-                if (match) {
-                    Cell newCell = new Cell(CellType.SEXUATE, this.foodManager);
-                    addCell(newCell);
-                    newCell.setReproductionCycle(0);
+            if (match) {
+                Cell newCell = new Cell(CellType.SEXUATE, this.foodManager);
+                addCell(newCell);
+                newCell.setReproductionCycle(0);
 
-                    return true; // Reproduction occurred
-                }
             }
         }
-        return false; // Reproduction did not occur
     }
 
 
@@ -125,7 +160,9 @@ public class CellManager {
             Cell cell = iterator.next();
 
             cell.updateTime();
-            cell.eat();
+            if(cell.getSaturation() <= 0) {
+                cell.eat();
+            }
 
             if (cell.starve()) {
 
