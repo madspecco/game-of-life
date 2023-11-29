@@ -8,6 +8,12 @@ public class CellManager {
     private static final List<Cell> cells = new ArrayList<>();
     private static final Lock cellListLock = new ReentrantLock();
 
+    private final FoodManager foodManager;
+
+    public CellManager(FoodManager fm){
+        this.foodManager = fm;
+    }
+
     // add a cell to the simulation
     public static void addCell(Cell cell) {
         cellListLock.lock();
@@ -63,49 +69,18 @@ public class CellManager {
         }
     }
 
-    // life cycle of the cells (eat, starve, reproduce)
-    public void updateCellState() {
-        cellListLock.lock();
-        try {
-            for (Cell cell : cells) {
-                // Call methods on each cell to update their state
-                System.out.println(" updating cell " + cell.getCellId() + "  ");
-                cell.start();
-            }
-        } finally {
-            cellListLock.unlock();
-        }
-    }
-
-    // same as updateCellState, instead of cell.start -> cell.updateTime()
-    public void updateCellTime() {
-        cellListLock.lock();
-        try {
-            for (Cell cell : cells) {
-                // Call methods on each cell to update their state
-                System.out.println(" updating cell time " + cell.getCellId() + "  ");
-                cell.updateTime();
-            }
-        } finally {
-            cellListLock.unlock();
-        }
-    }
-
     public boolean reproduceCell(Cell cell) {
         CellType type = cell.getType();
         int reproductionCycle = cell.getReproductionCycle();
 
         if (reproductionCycle >= 10) {
             if (type == CellType.ASEXUATE) {
-                Cell newCell1 = new Cell(CellType.ASEXUATE);
-                Cell newCell2 = new Cell(CellType.ASEXUATE);
+                Cell newCell1 = new Cell(CellType.ASEXUATE, this.foodManager);
 
                 addCell(newCell1);
-                addCell(newCell2);
 
                 // Reset the reproduction cycle
                 newCell1.setReproductionCycle(0);
-                newCell2.setReproductionCycle(0);
                 cell.setReproductionCycle(0);
 
                 return true; // Reproduction occurred
@@ -129,7 +104,7 @@ public class CellManager {
                 }
 
                 if (match) {
-                    Cell newCell = new Cell(CellType.SEXUATE);
+                    Cell newCell = new Cell(CellType.SEXUATE, this.foodManager);
                     addCell(newCell);
                     newCell.setReproductionCycle(0);
 
@@ -150,23 +125,16 @@ public class CellManager {
             Cell cell = iterator.next();
 
             cell.updateTime();
-            System.out.println("CellManager cell[" + cell.getCellId() + "].eat()");
             cell.eat();
 
-            if (cell.starve() == true) {
+            if (cell.starve()) {
 
-                System.out.println("CellManager cell[" + cell.getCellId() + "] HAS STARVED, REMOVE IT");
                 removeCell(cell);
-                iterator.remove(); // Remove the current cell using the iterator's remove method
+                iterator.remove(); // Remove the current cell using the iterator remove method
 
-                cell = null;
-                System.out.println("CellList size AFTER starvation: " + cellList.size());
             } else {
-                System.out.println("CellManager cell[" + cell.getCellId() + "] is reproducing");
                 reproduceCell(cell);
             }
-
-            System.out.println("Cycle ended");
         }
     }
 }

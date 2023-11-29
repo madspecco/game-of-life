@@ -1,28 +1,49 @@
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 public class SimulationManager {
-    private CellManager cellManager;    // Instance of CellManager
-    private FoodManager foodManager;    // Instance of FoodManager
-    private boolean isRunning;          // Flag for running state
+    private final CellManager cellManager;      // Instance of CellManager
+    private final FoodManager foodManager;      // Instance of FoodManager
+    private boolean isRunning;                  // Flag for running state
     private int simulationTime;
 
+    private JFrame frame;
+    private CellGUI cellGUI;
+
     public SimulationManager(int initialFoodUnits, int initialCellCount) {
-        cellManager = new CellManager(); // Create an instance of CellManager
         foodManager = new FoodManager(initialFoodUnits);
+        cellManager = new CellManager(this.foodManager); // Create an instance of CellManager
         isRunning = true;
         simulationTime = 0;
-
+        Random random = new Random();
         // Create and add initial cells to the simulation using the CellManager
         for (int i = 0; i < initialCellCount; i++) {
-            CellType cellType = (i % 2 == 0) ? CellType.SEXUATE : CellType.ASEXUATE;
-            Cell cell = new Cell(cellType);
-            cell.updateFoodManagerFoodUnits(initialFoodUnits); // Set the food manager for each cell
+            // Generate a random number between 0 and 1
+            double randomValue = random.nextDouble();
+
+            // Decide the cell type based on the random number
+            CellType cellType = (randomValue < 0.5) ? CellType.ASEXUATE : CellType.SEXUATE;
+
+            // Create the cell based on the determined type
+            Cell cell = new Cell(cellType, this.foodManager); // Set the food manager for each cell
             CellManager.addCell(cell); // Add the cell to the CellManager
         }
 
         // Start the simulation threads
-        cellManager.updateCellState();
+        cellManager.startCells();
+
+        frame = new JFrame("Cell Simulation");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        List<Cell> cellsForGUI = cellManager.getAllCells();
+        cellGUI = new CellGUI(cellsForGUI);
+        frame.add(cellGUI);
+
+        frame.setSize(800, 600); // Set the size of the frame
+        frame.setVisible(true);
     }
 
     public void stopSimulation() {
@@ -30,26 +51,20 @@ public class SimulationManager {
         cellManager.stopCells(); // Stop the cell threads using CellManager
     }
 
+    public List<Cell> getAllCellsForGUI() {
+        return CellManager.getAllCells();
+    }
+
     public void runSimulation() {
         System.out.println("runSimulation() initiated.");
         while (isRunning) {
-            if(simulationTime == 0) {
-                System.out.println("Printing INITIAL grid");
-                printSimulationStateGraphic();
-            }
             simulationTime++;
 
-            if(simulationTime == 0) {
-                System.out.println("Printing INITIAL grid");
-                printSimulationStateGraphic();
-            }
-
             cellManager.performCellActions();
-            System.out.println("cell life cycle updated (eat,starve,reproduce cycle");
+            foodManager.addDeadCellFoodUnits();
 
-            // Print the current state of the simulation
-            printSimulationStateGraphic();
-            System.out.println("Printing grid");
+            printStatistics();
+            cellGUI.updateCells(cellManager.getAllCells());
 
             if (simulationTime % 20 == 0) {
                 stopSimulation();
@@ -63,39 +78,29 @@ public class SimulationManager {
         }
     }
 
-    private void printSimulationStateGraphic() {
-        // Clear the console to redraw the simulation state (you may need platform-specific code) !!!
-        System.out.println("\n\n\n\n\n");
+    private void printStatistics() {
+        System.out.println("\n\n\n\n----Statistics----\n");
 
-        System.out.println("Simulation State:");
-        char[][] grid = new char[20][20]; // Adjust the grid size as needed
-
-        // Retrieve the list of cells from the CellManager
-        List<Cell> cells = cellManager.getAllCells();
+        int asexuate_count = 0;
+        int sexuate_count = 0;
         int foodUnitCount = 0;
-        // Determine cell position according to its id
-        for (Cell cell : cells) {
-            long x = cell.getId() % 20;
-            long y = cell.getId() / 20;
 
+        List<Cell> cells = CellManager.getAllCells();
+        for(Cell cell : cells) {
             char cellSymbol = (cell.getType() == CellType.ASEXUATE) ? 'A' : 'S';
-            grid[(int) y][(int) x] = cellSymbol;
+            if (cellSymbol == 'A') {
+                asexuate_count++;
+            } else {
+                sexuate_count++;
+            }
 
+            System.out.println(cellSymbol + " Cell ID: " + cell.getCellId() + " hunger - " + cell.getHunger() + " reprC - " + cell.getReproductionCycle());
             foodUnitCount = cell.getFoodUnitCountFromFoodManager();
         }
 
-        for (int y = 0; y < 20; y++) {
-            for (int x = 0; x < 20; x++) {
-                if (grid[y][x] == '\0') {
-                    grid[y][x] = '.'; // Empty space
-                }
-                System.out.print(grid[y][x] + " ");
-            }
-            System.out.println();
-        }
+        System.out.println("food units: " + foodUnitCount);
 
-        //System.out.println("Food Units: " + foodManager.getFoodUnits());
-        System.out.println("Food Units: " + foodUnitCount);
-        System.out.println("------------------------------------");
+        System.out.println("asexuate cells: " + asexuate_count);
+        System.out.println("sexuate cells: " + sexuate_count);
     }
 }
