@@ -8,7 +8,7 @@ public class CellManager {
     private static final List<Cell> cells = new ArrayList<>();
     private static final Lock cellListLock = new ReentrantLock();
 
-    private FoodManager foodManager;
+    private final FoodManager foodManager;
 
     public CellManager(FoodManager fm){
         this.foodManager = fm;
@@ -69,34 +69,6 @@ public class CellManager {
         }
     }
 
-//    // life cycle of the cells (eat, starve, reproduce)
-//    public void updateCellState() {
-//        cellListLock.lock();
-//        try {
-//            for (Cell cell : cells) {
-//                // Call methods on each cell to update their state
-//                System.out.println(" updating cell " + cell.getCellId() + "  ");
-//                cell.start();
-//            }
-//        } finally {
-//            cellListLock.unlock();
-//        }
-//    }
-
-//    // same as updateCellState, instead of cell.start -> cell.updateTime()
-//    public void updateCellTime() {
-//        cellListLock.lock();
-//        try {
-//            for (Cell cell : cells) {
-//                // Call methods on each cell to update their state
-//                System.out.println(" updating cell time " + cell.getCellId() + "  ");
-//                cell.updateTime();
-//            }
-//        } finally {
-//            cellListLock.unlock();
-//        }
-//    }
-
     public boolean reproduceCell(Cell cell) {
         CellType type = cell.getType();
         int reproductionCycle = cell.getReproductionCycle();
@@ -153,23 +125,16 @@ public class CellManager {
             Cell cell = iterator.next();
 
             cell.updateTime();
-            //System.out.println("CellManager cell[" + cell.getCellId() + "].eat()");
             cell.eat();
 
             if (cell.starve()) {
 
-                //System.out.println("CellManager cell[" + cell.getCellId() + "] HAS STARVED, REMOVE IT");
                 removeCell(cell);
-                iterator.remove(); // Remove the current cell using the iterator's remove method
+                iterator.remove(); // Remove the current cell using the iterator remove method
 
-                cell = null;
-                //System.out.println("CellList size AFTER starvation: " + cellList.size());
             } else {
-                //System.out.println("CellManager cell[" + cell.getCellId() + "] is reproducing");
                 reproduceCell(cell);
             }
-
-            //System.out.println("Cycle ended");
         }
     }
 }

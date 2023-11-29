@@ -5,7 +5,7 @@ public class FoodManager {
     private int foodUnits;  // Total food units available
 
     private int deadCellFoodUnits = 0;
-    private Lock foodLock;  // For synchronization, same usage as the cellLock, the name differs
+    private final Lock foodLock;  // For synchronization, same usage as the cellLock, the name differs
 
     public FoodManager(int initialFoodUnits) {
         this.foodUnits = initialFoodUnits;
