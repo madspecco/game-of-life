@@ -21,11 +21,13 @@ public class CellGUI extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        int borderWidth = 2;
         int cellSize = getWidth() / gridSize; // Calculate cell size based on the panel width
 
-        // Fill the entire background with white
-        g.setColor(Color.WHITE);
+        // Fill the entire background
+        g.setColor(new Color(240, 240, 240));
         g.fillRect(0, 0, getWidth(), getHeight());
+
 
         // Draw the border
         for(int i = 0; i < gridSize; i++){
@@ -34,47 +36,47 @@ public class CellGUI extends JPanel {
                     int x = (int) i * cellSize;
                     int y = (int) j * cellSize;
 
-                    // Set color based on cell type
+                    /*// Set color based on cell type
                     g.setColor(Color.BLACK);
 
                     // Paint a filled rectangle representing the cell
+                    g.fillRect(x, y, cellSize, cellSize);*/
+
+                    // Set color for the border
+                    g.setColor(new Color(200, 200, 200)); // Lighter gray
                     g.fillRect(x, y, cellSize, cellSize);
+
+                    // Draw inner rectangle to represent the cell
+                    g.setColor(Color.gray);
+                    g.fillRect(x + borderWidth, y + borderWidth, cellSize - 2 * borderWidth, cellSize - 2 * borderWidth);
                 }
             }
         }
 
+        // Draw cells and text information inside the borders
         for (Cell cell : cells) {
-            int x = cell.getxPos() * cellSize;
-            int y = cell.getyPos() * cellSize;
+            int x = cell.getxPos() * cellSize + borderWidth;
+            int y = cell.getyPos() * cellSize + borderWidth;
 
             // Set color based on cell type
             g.setColor((cell.getType() == CellType.ASEXUATE) ? Color.CYAN : Color.YELLOW);
 
-            // Paint a filled rectangle representing the cell
-            g.fillRect(x, y, cellSize, cellSize);
+            // Paint a filled rectangle representing the cell inside the borders
+            g.fillRect(x, y, cellSize - 2 * borderWidth, cellSize - 2 * borderWidth);
 
-            // Draw the first line of text in the center of the rectangle
-            String text1 = "ID: " + cell.getCellId(); // You can customize this text as needed
-            FontMetrics fontMetrics = g.getFontMetrics(new Font("Arial", Font.PLAIN, 10)); // Adjust the font size as needed
-            int textX1 = x + (cellSize - fontMetrics.stringWidth(text1)) / 2;
-            int textY1 = y + (cellSize - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent() - 10;
+            // Draw text information
             g.setColor(Color.BLACK);
-            g.drawString(text1, textX1, textY1);
-
-            // Draw the second line of text below the first one
-            // String text2 = (cell.getType() == CellType.ASEXUATE) ? "A" : "S";
-
+            FontMetrics fontMetrics = g.getFontMetrics(new Font("Arial", Font.BOLD, 10));
+            String text1 = "ID: " + cell.getCellId();
             String text2 = "S: " + cell.getSaturation();
-            int textX2 = x + (cellSize - fontMetrics.stringWidth(text2)) / 2;
-            int textY2 = textY1 + fontMetrics.getHeight() - 2; // Place it below the first line
-            g.drawString(text2, textX2, textY2);
-
-            // Draw the third line of text below the second one
-            // String text2 = (cell.getType() == CellType.ASEXUATE) ? "A" : "S";
             String text3 = "RC: " + cell.getReproductionCycle();
-            int textX3 = (x + (cellSize - fontMetrics.stringWidth(text2)) / 2) - 4;
-            int textY3 = textY2 + fontMetrics.getHeight() - 1; // Place it below the second line
-            g.drawString(text3, textX3, textY3);
+
+            int textX = x + ((cellSize - fontMetrics.stringWidth(text1)) / 2 - 4);
+            int textY = y + (cellSize - fontMetrics.getHeight() * 3) / 2 + fontMetrics.getAscent();
+
+            g.drawString(text1, textX, textY);
+            g.drawString(text2, textX, textY + fontMetrics.getHeight());
+            g.drawString(text3, textX, textY + 2 * fontMetrics.getHeight());
         }
 
         // Draw grid lines
@@ -86,7 +88,12 @@ public class CellGUI extends JPanel {
         }
 
         g.setColor(Color.WHITE);
-        g.drawString("FOOD UNITS: " + Cell.getFoodUnitCountFromFoodManager(), 30, 30);
+        g.drawString("FOOD ", 73, 35);
 
+        g.setColor(Color.WHITE);
+        g.drawString("UNITS: ", 130, 35);
+
+        g.setColor(Color.WHITE);
+        g.drawString(" " + Cell.getFoodUnitCountFromFoodManager(), 198, 35);
     }
 }

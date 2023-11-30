@@ -33,15 +33,16 @@ public class SimulationManager {
         // Start the simulation threads
         cellManager.startCells();
 
-        frame = new JFrame("Cell Simulation");
+        frame = new JFrame("Game Of Life - Cell Simulation");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         List<Cell> cellsForGUI = cellManager.getAllCells();
         cellGUI = new CellGUI(cellsForGUI);
         frame.add(cellGUI);
 
-        frame.setSize(800, 800); // Set the size of the frame
+        frame.setSize(600, 627); // Set the size of the frame
         frame.setVisible(true);
+        frame.setResizable(false);
     }
 
     public void stopSimulation() {
