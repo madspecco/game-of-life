@@ -1,15 +1,23 @@
 import java.util.List;
 import java.util.Random;
 import javax.swing.*;
+import java.awt.*;
 
 public class SimulationManager {
     private final CellManager cellManager;      // Instance of CellManager
     private final FoodManager foodManager;      // Instance of FoodManager
     private boolean isRunning;                  // Flag for running state
+
+    public int getSimulationTime() {
+        return simulationTime;
+    }
+
     private int simulationTime;
 
-    private JFrame frame;
+    private JFrame frame, frame1;
     private CellGUI cellGUI;
+
+    private SimulationGUI simulationGUI;
 
     public SimulationManager(int initialFoodUnits, int initialCellCount) {
         foodManager = new FoodManager(initialFoodUnits);
@@ -31,6 +39,14 @@ public class SimulationManager {
         }
 
         // Start the simulation threads
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+
+        int xCoordinate = screenWidth / 2 - 39;
+        int yCoordinate = screenHeight/ 2 - 400;
+
         cellManager.startCells();
 
         frame = new JFrame("Game Of Life - Cell Simulation");
@@ -43,6 +59,15 @@ public class SimulationManager {
         frame.setSize(600, 627); // Set the size of the frame
         frame.setVisible(true);
         frame.setResizable(false);
+
+        simulationGUI = new SimulationGUI(cellsForGUI);
+        frame1 = new JFrame("Game Of Life - Cell Simulation Process");
+        frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame1.add(simulationGUI);
+        frame1.setSize(600, 627); // Set the size of the frame
+        frame1.setVisible(true);
+        frame1.setResizable(false);
+        frame1.setLocation(xCoordinate, yCoordinate);
     }
 
     public void stopSimulation() {
@@ -64,6 +89,7 @@ public class SimulationManager {
 
             printStatistics();
             cellGUI.updateCells(cellManager.getAllCells());
+            simulationGUI.updateCells(cellManager.getAllCells());
 
             if (simulationTime % 300 == 0) {
                 stopSimulation();
