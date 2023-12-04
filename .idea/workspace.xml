@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="553f749e-2e71-4cc5-8f36-263cc3600605" name="Changes" comment="- Modified GUI">
-      <change afterPath="$PROJECT_DIR$/Game_of_Life/src/SimulationGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game_of_Life/src/SimulationManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/Game_of_Life/src/SimulationManager.java" afterDir="false" />
-    </list>
+    <list default="true" id="5822387b-5a2b-4c64-be06-a76a110ab18f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,16 +17,17 @@
       </list>
     </option>
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 4
-}</component>
-  <component name="ProjectId" id="2Y5DNtuQNjgU7PEge9Va1OwtNVM" />
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2Z4bYDHKckBqUE03IiKbyS7roBh" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -39,22 +36,19 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/myStuff/Repositories/game-of-life",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "vue.rearranger.settings.migration": "true"
+    "last_opened_file_path": "C:/UPT/Fourth Year/CEBP/game-of-life"
   }
 }]]></component>
   <component name="RunManager">
     <configuration name="GameOfLifeSimulation" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="GameOfLifeSimulation" />
+      <option name="MAIN_CLASS_NAME" value="org.example.GameOfLifeSimulation" />
       <module name="game-of-life" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -68,29 +62,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="553f749e-2e71-4cc5-8f36-263cc3600605" name="Changes" comment="" />
-      <created>1699806510095</created>
+      <changelist id="5822387b-5a2b-4c64-be06-a76a110ab18f" name="Changes" comment="" />
+      <created>1701684343639</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1699806510095</updated>
-      <workItem from="1699806511178" duration="672000" />
-      <workItem from="1700833020735" duration="8000" />
+      <updated>1701684343639</updated>
     </task>
-    <task id="LOCAL-00001" summary="- Modified GUI">
-      <created>1701367480765</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1701367480765</updated>
-    </task>
-    <option name="localTasksCounter" value="2" />
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="- Modified GUI" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Modified GUI" />
   </component>
 </project>
