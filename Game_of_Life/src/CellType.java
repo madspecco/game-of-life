@@ -1,16 +1,19 @@
-// create type for the cell using enum
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 public enum CellType {
     ASEXUATE("Asexuate Cell"),
     SEXUATE("Sexuate Cell");
 
     private final String displayName;
 
-    CellType(String displayName) {
+    private CellType(String displayName) {
         this.displayName = displayName;
     }
 
-    @Override
     public String toString() {
-        return displayName;
+        return this.displayName;
     }
 }

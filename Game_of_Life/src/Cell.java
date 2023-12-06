@@ -1,27 +1,38 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+import java.awt.*;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
+import java.util.List;
 
 public class Cell extends Thread {
     private static int nextId = 0;
-    private final int id;           // unique id for the cell
-    private final CellType type;    // type of the cell
+    private final int id;
+    private final CellType type;
 
-    public void setSaturation(int saturation) {
-        this.saturation = saturation;
-    }
-
-    private int saturation;             // hunger state (satiation)
-
+    private int saturation;
     public final int T_full = 5;
     public final int T_starve = -5;
-
-    private static FoodManager foodManager; //no food manager in cell
-
+    private static FoodManager foodManager;
     private int xPos;
+    private int yPos;
+    private int reproductionCycle;
+    private final Lock cellLock;
+    private boolean alive = true;
+    Semaphore foodSem;
+    Semaphore cellSem;
+    Semaphore reprSem;
+    private CellManager parentManager;
+
+    public boolean readyToReproduce = false;
 
     public int getxPos() {
-        return xPos;
+        return this.xPos;
     }
 
     public void setxPos(int xPos) {
@@ -29,85 +40,224 @@ public class Cell extends Thread {
     }
 
     public int getyPos() {
-        return yPos;
+        return this.yPos;
     }
 
     public void setyPos(int yPos) {
         this.yPos = yPos;
     }
 
-    private int yPos;
+    public void setSaturation(int saturation) {
+        this.saturation = saturation;
+    }
 
     public void setReproductionCycle(int reproductionCycle) {
         this.reproductionCycle = reproductionCycle;
     }
 
-    private int reproductionCycle;  // at 10 cycles, the cell reproduces(by case)
-    private final Lock cellLock;    // Lock object for managing concurrency issues
-
-
-    public Cell(CellType type, FoodManager fm) {
+    public Cell(CellType type, FoodManager fm, Semaphore fs, Semaphore cs,Semaphore rs, CellManager parentManager) {
         this.id = nextId++;
         this.type = type;
         this.saturation = 0;
         this.reproductionCycle = 0;
         this.cellLock = new ReentrantLock();
-        this.foodManager = fm;
-        // A reentrant lock is a mutual exclusion mechanism that allows threads to reenter into a lock
-        // on a resource (multiple times) without a deadlock situation
+        foodManager = fm;
+        foodSem = fs;
+        cellSem = cs;
+        reprSem = rs;
+        this.parentManager = parentManager;
     }
-    public boolean eat() {
-        if (saturation <= 0) {
-            // check if food was really eaten, then decrement hunger
-            boolean foodEaten = foodManager.consumeFood(this, 1);
-            if (foodEaten) {
-                saturation = T_full;
-                reproductionCycle++;
+
+    // food related functions
+    private void eat() throws InterruptedException {
+        // First, get a permit.
+        System.out.println("Cell " + id + " is waiting for a foodManager permit.");
+
+        // acquiring the lock
+        if( foodSem.tryAcquire(100, TimeUnit.MILLISECONDS) ) {
+
+            System.out.println("Cell " + id + " gets a foodManager permit.");
+
+            // Now, accessing the shared resource.
+            boolean hasEaten = foodManager.consumeFood();
+
+            // Release the permit.
+            foodSem.release();
+
+            // Check if the cell found food and act accordingly
+            if (hasEaten) {
+                this.saturation = T_full;
+                this.reproductionCycle = this.reproductionCycle + 1;
+                System.out.println("Cell " + id + " has eaten");
+            } else {
+                System.out.println("Cell " + id + " could not eat. No food left.");
             }
-            return foodEaten;
         }
-        return false;
+        else{
+            System.out.println("Cell " + id + " didnt find a foodManager permit");
+        }
     }
 
-    public boolean starve() {
-        cellLock.lock();
-        try {
-            if (saturation == T_starve) {
-                int foodUnitsDropped = (int) (Math.random() * 4) + 1;
-                foodManager.replenishFood(foodUnitsDropped);
+    public void starve() throws InterruptedException {
+        // First, get a permit.
+        System.out.println("Cell " + id + " is waiting for a foodManager permit.");
 
-                // remove the cell from the simulation
-                return true;
+        // acquiring the lock
+        foodSem.acquire();
+
+        System.out.println("Cell " + id + " gets a foodManager permit.");
+
+        int foodUnitsDropped = (int)(Math.random() * 4.0) + 1;
+        foodManager.replenishFood(foodUnitsDropped);
+
+        foodSem.release();
+
+    }
+
+    public void reproduceCell() {
+
+
+        if (this.type == CellType.ASEXUATE) {
+
+            Cell newCell1 = new Cell(CellType.ASEXUATE, this.foodManager, this.foodSem, this.cellSem, this.reprSem, this.parentManager);
+
+            try {
+                System.out.println("Cell " + id + " is waiting for a cellManager permit.");
+                cellSem.acquire();
+                System.out.println("Cell " + id + " gets a cellManager permit.");
+
+                parentManager.addCell(newCell1);
+                newCell1.start();
+
+                System.out.println("Cell " + newCell1.id + " born. (A)");
+
+                this.reproductionCycle = 0;
+                this.saturation = 0;
+
+                cellSem.release();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-            return false; // Cell is not starving
-        } finally {
-            // unlock the cell
-            cellLock.unlock();
+
+        }
+        else{
+            try {
+                System.out.println("Cell " + id + " is waiting for a reproduction permit.");
+                reprSem.acquire();
+
+                if(reprSem.availablePermits() == 1){
+                    //first cell
+                    this.readyToReproduce = true;
+                    Thread.sleep(5);
+                    this.readyToReproduce = false;
+                }
+                else if(reprSem.availablePermits() == 0){
+                    //second cell
+                    List<Cell> cells = parentManager.getAllCells();
+                    for (Cell cell : cells){
+                        if(cell.readyToReproduce){
+                            Cell newCell1 = new Cell(CellType.SEXUATE, this.foodManager, this.foodSem, this.cellSem, this.reprSem, this.parentManager);
+                            try {
+                                System.out.println("Cell " + id + " is waiting for a cellManager permit.");
+                                cellSem.acquire();
+                                System.out.println("Cell " + id + " gets a cellManager permit.");
+
+                                parentManager.addCell(newCell1);
+                                newCell1.start();
+
+                                System.out.println("Cell " + newCell1.id + " born. (S)");
+
+                                this.reproductionCycle = 0;
+                                this.saturation = 0;
+
+                                cell.setSaturation(0);
+                                cell.setReproductionCycle(0);
+
+                                cellSem.release();
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+
+                    Thread.sleep(5);
+                }
+
+                reprSem.release();
+
+
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
+    @Override
+    public void run(){
+        while(this.alive){
+            try {
+                Thread.sleep(100);
+                this.saturation = this.saturation - 1;
+
+                if(saturation <= 0){
+                    this.eat();
+                }
+
+                if(saturation <= T_starve){
+                    this.alive = false;
+                }
+
+                if(reproductionCycle >= 10){
+                    this.reproduceCell();
+                }
+
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            System.out.println("Cell " + id + " saturation is " + this.saturation);
+        }
+
+        try {
+            this.starve();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            System.out.println("Cell " + id + " is waiting for a cellManager permit.");
+            cellSem.acquire();
+            System.out.println("Cell " + id + " gets a cellManager permit.");
+
+            parentManager.removeCell(this);
+
+            System.out.println("Cell " + id + " died.");
+
+            cellSem.release();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public int getCellId() {
-        return id;
+        return this.id;
     }
 
     public CellType getType() {
-        return type;
+        return this.type;
     }
 
     public int getSaturation() {
-        return saturation;
+        return this.saturation;
     }
 
     public int getReproductionCycle() {
-        return reproductionCycle;
+        return this.reproductionCycle;
     }
 
     public static int getFoodUnitCountFromFoodManager() {
         return foodManager.getFoodUnits();
     }
 
-    public void updateTime() {
-        // for each cycle, hunger --
-        this.saturation = saturation - 1;
-    }
 }

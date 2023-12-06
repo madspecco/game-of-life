@@ -1,48 +1,49 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class FoodManager {
-    private int foodUnits;  // Total food units available
-
-    private int deadCellFoodUnits = 0;
-    private final Lock foodLock;  // For synchronization, same usage as the cellLock, the name differs
+    private int foodUnits;
+    private final Lock foodLock;
 
     public FoodManager(int initialFoodUnits) {
         this.foodUnits = initialFoodUnits;
         this.foodLock = new ReentrantLock();
     }
 
-    public boolean consumeFood(Cell cell, int amount) {
-        foodLock.lock();
+    public boolean consumeFood(){
+        this.foodLock.lock();
+
         try {
-            if (foodUnits >= amount) {
-                foodUnits -= amount;
-                // cell.eat(); // Notify the cell that it has eaten
-                return true; // Food consumed successfully
+            if(this.foodUnits > 0) {
+                this.foodUnits = this.foodUnits - 1;
+                return true;
             }
-            return false; // Not enough food available
+            else{
+                return false;
+            }
         } finally {
-            foodLock.unlock();
+            this.foodLock.unlock();
         }
     }
 
-    // increase food units
     public void replenishFood(int amount) {
-        foodLock.lock();
-        try {
-            deadCellFoodUnits += amount;
-        } finally {
-            foodLock.unlock();
-        }
-    }
+        this.foodLock.lock();
 
-    public void addDeadCellFoodUnits() {
-        this.foodUnits += deadCellFoodUnits;
-        deadCellFoodUnits = 0;
+        try {
+            this.foodUnits += amount;
+        } finally {
+            this.foodLock.unlock();
+        }
+
     }
 
     public int getFoodUnits() {
-        return foodUnits;
+        return this.foodUnits;
     }
 
     public void setFoodUnits(int foodUnits) {
