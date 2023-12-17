@@ -51,3 +51,64 @@ Implement the logic for cell reproduction, which depends on cell type and their 
 
 #### 6. Logging and Visualization
 Consider how we'll log events and visualize the simulation to monitor and understand what's happening.
+
+
+## Solution Structure
+### Classes
+* Cell 
+    - extension of the Thread class
+    - based on several conditions, accomplishes several tasks (eat, reproduce, die)
+        
+
+* CellManager				
+    - shortly put, an array of all the (active)cells in the simulation methods, for adding, removing and starting/stopping the lifecycle
+
+
+* FoodManager				
+    - simple class for keeping track of the food units inside the simulation using methods like consumeFood, replenishFood, getFoodUnits
+
+
+* SimulationManager 	
+    - the class that represents the environment of the simulation
+    - used for updating the simulation time and also the GUI
+
+
+
+*  CellGUI & SimulationGUI
+   - classes for the GUI components (not mandatory to the project structure presentation)
+
+
+* SimLogger
+   - class that sends messages based on a certain event (death, food-related events, reproduction)
+
+### Enum Classes
+* CellType
+    - simple enum class for defining the type of the cell 
+* EventType
+   - class used for defining events
+
+
+## Concurrency Problems and Solutions
+
+### Race Conditions and Data Consistency
+When a cell dies or consumes food, a **semaphore** is used in order to prevent multiple
+cells from trying to modify the food value from inside the food manager at the same time.
+
+This is also applicable when cell reproduction comes into play, we prevent the cells from accessing the cell manager at the same time using a semaphore.
+
+Also, we make use of the locking mechanism on the food manager so that only one Cell (Thread) can access it at a time.
+
+### Synchronization and Deadlocks
+Another example of using semaphores, is when sexuate cells are looking for a partner, we use a semaphore with **two permits**. The first cell to pass the semaphore, waits for a second one to pass, in order to reproduce with it. If there is no second cell, the first cell exits the semaphore after a short time, and tries again later.
+
+## Event based communication service
+For this section of our project, we used RabbitMQ.
+
+To put it simply, we make use of the EventType enum class:     
+* FOOD_REPLENISHED,
+* FOOD_CONSUMED,
+* REPRODUCTION_A,
+* REPRODUCTION_S,
+* DEATH
+
+This enum class contains multiple types which are later to be used for queueing the messages accordingly(as used by the SimLogger class).
